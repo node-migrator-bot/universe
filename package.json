@@ -8,9 +8,8 @@
 
     "repository": {
         "type": "git",
-        "url": "git://github.com/AngryBytes/universe.git"
+        "url": "https://github.com/AngryBytes/universe.git"
     },
-    "private": true,
 
     "engines": {
         "node": ">=0.6.0"
