@@ -1,4 +1,4 @@
-**Universe** is a library used to declare some project directory structure.
+**Universe** is a library used to declare some project directory structure. [![Build Status](https://secure.travis-ci.org/AngryBytes/universe.png)](http://travis-ci.org/AngryBytes/universe)
 
 At the heart of universe is the project root:
 
