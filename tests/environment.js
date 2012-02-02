@@ -6,7 +6,7 @@ var universe = require('../');
 testDir = '/tmp/universe-test-environment';
 testTmpDir = testDir + '/tmp'
 
-test('allow overrides from environment', function(t) {
+test('overrides from the environment', function(t) {
     process.env['UNIVERSE_ROOT'] = testDir;
     t.equal(testDir, universe.root, 'root dir should match environment');
 

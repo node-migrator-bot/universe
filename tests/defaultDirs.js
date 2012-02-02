@@ -4,7 +4,7 @@ var universe = require('../');
 testDir = '/tmp/universe-test-defaultRoot';
 testBinDir = testDir + '/bin';
 
-test('default root dir is derived from bin', function(t) {
+test('default directories', function(t) {
     oldMain = require.main.filename;
     require.main.filename = testBinDir + '/foo.js';
     t.equal(testDir, universe.defaultRoot,

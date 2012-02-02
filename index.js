@@ -67,6 +67,12 @@ var addDirInternal = function(propName, umask, getDefault, fixed) {
             return exports[defaultName];
     };
     exportFixedProp(propName, getter, fixed);
+
+    // Define a `path.join` wrapper.
+    exports[propName + "Path"] = function() {
+        var args = Array.prototype.slice.apply(arguments);
+        return path.join.apply(path, [exports[propName]].concat(args));
+    };
 }
 
 
