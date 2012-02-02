@@ -55,7 +55,6 @@ exportFixedProp('defaultRoot', function() {
         return process.cwd();
 });
 
-
 // The project root directory. Use this (rather than `defaultRoot`) to
 // actually resolve paths in the project.
 exportFixedProp('root', function() {
@@ -75,6 +74,12 @@ var addDir = exports.addDirectory = function(varName, directory, umask) {
     if (typeof(umask) !== 'number')
         umask = 0777;
 
+    var defaultName = "default" +
+        varName.charAt(0).toUpperCase() + varName.slice(1);
+    exportFixedProp(defaultName, function() {
+        return path.resolve(exports.root, directory);
+    });
+
     var getDefault = function() {
         var envName = exports.envPrefix + "_" + varName.toUpperCase();
         var envDirectory = process.env[envName];
@@ -82,9 +87,8 @@ var addDir = exports.addDirectory = function(varName, directory, umask) {
         if (envDirectory)
             return envDirectory;
         else
-            return path.resolve(exports.root, directory);
+            return exports[defaultName];
     };
-
     var didFix = function(value) {
         try {
             fs.mkdirSync(value, umask);
@@ -94,7 +98,6 @@ var addDir = exports.addDirectory = function(varName, directory, umask) {
                 throw e;
         }
     };
-
     exportFixedProp(varName, getDefault, didFix);
 };
 
