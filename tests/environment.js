@@ -10,17 +10,14 @@ test('allow overrides from environment', function(t) {
     process.env['UNIVERSE_ROOT'] = testDir;
     t.equal(testDir, universe.root, 'root dir should match environment');
 
-    fs.mkdir(testDir, 0700, function(err) {
-        if (err && err.code !== 'EEXIST')
-            t.error(err, 'create test suite working directory');
+    fs.mkdirSync(testDir, 0700);
 
-        universe.envPrefix = 'FOOBAR';
-        process.env['FOOBAR_TMP'] = testTmpDir;
-        t.equal(testTmpDir, universe.tmp, 'tmp dir should match environment');
+    universe.envPrefix = 'FOOBAR';
+    process.env['FOOBAR_TMP'] = testTmpDir;
+    t.equal(testTmpDir, universe.tmp, 'tmp dir should match environment');
 
-        rimraf(testDir, function(err) {
-            t.error(err, 'cleanup of test suite working directory');
-            t.end();
-        });
+    rimraf(testDir, function(err) {
+        if (err) throw err;
+        t.end();
     });
 });
