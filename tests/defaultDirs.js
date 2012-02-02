@@ -7,7 +7,7 @@ testBinDir = testDir + '/bin';
 test('default directories', function(t) {
     oldMain = require.main.filename;
     require.main.filename = testBinDir + '/foo.js';
-    t.equal(testDir, universe.defaultRoot,
+    t.equal(universe.defaultRoot, testDir,
         'default root should be derived from executable path');
     require.main.filename = oldMain;
 

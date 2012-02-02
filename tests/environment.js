@@ -8,13 +8,15 @@ testTmpDir = testDir + '/tmp'
 
 test('overrides from the environment', function(t) {
     process.env['UNIVERSE_ROOT'] = testDir;
-    t.equal(testDir, universe.root, 'root dir should match environment');
+    t.equal(universe.root, testDir,
+        'root dir should match environment');
 
     fs.mkdirSync(testDir, 0700);
 
     universe.envPrefix = 'FOOBAR';
     process.env['FOOBAR_TMP'] = testTmpDir;
-    t.equal(testTmpDir, universe.tmp, 'tmp dir should match environment');
+    t.equal(universe.tmp, testTmpDir,
+        'tmp dir should match environment');
 
     rimraf(testDir, function(err) {
         if (err) throw err;

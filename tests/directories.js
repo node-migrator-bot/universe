@@ -13,7 +13,8 @@ test('directory utilities', function(t) {
     t.equal(universe.rootPath('foo', 'bar/baz'), testDir + '/foo/bar/baz',
         'rootPath should return a path.join()ed subpath');
 
-    t.equal(testTmpDir, universe.tmp, 'tmp dir should be underneath root');
+    t.equal(universe.tmp, testTmpDir,
+        'tmp dir should be underneath root');
     t.doesNotThrow(function() {
         fs.statSync(testTmpDir);
     }, 'tmp dir should exist');
