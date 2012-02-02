@@ -20,7 +20,7 @@ var path = require('path');
 
 // Pretty much everything we export is a lazy property that becomes
 // fixed (unwritable) once accessed. This helper wraps that pattern.
-function exportFixedProp(name, getDefault, didFix) {
+var exportFixedProp = function(name, getDefault, didFix) {
     Object.defineProperty(exports, name, {
         configurable: true,
         get: function() {
@@ -45,51 +45,56 @@ exportFixedProp('envPrefix', function() {
 });
 
 
-// The default root directory. When specifying a root from code, it's
-// recommended to set this (rather than `root`), to allow a user to still
-// override it using the environment.
-exportFixedProp('defaultRoot', function() {
+// Internal helper that defines the common stuff between the root directory
+// and subdirectory properties.
+var addDirInternal = function(propName, umask, getDefault, fixed) {
+    // Define the property that allows the application to override the default
+    // path to a subdirectory.
+    var defaultName = "default" +
+        propName.charAt(0).toUpperCase() + propName.slice(1);
+    exportFixedProp(defaultName, getDefault);
+
+    // Define the directory property itself.
+    var getter = function() {
+        // Accept an override from the environment.
+        var envName = exports.envPrefix + "_" + propName.toUpperCase();
+        var envDirectory = process.env[envName];
+        if (envDirectory)
+            return envDirectory;
+        // Otherwise, use the application default
+        // from the property defined above.
+        else
+            return exports[defaultName];
+    };
+    exportFixedProp(propName, getter, fixed);
+}
+
+
+// The root directory. There's no fixed callback, we expect the user to
+// always ensure the root directory exists.
+addDirInternal('root', 0777, function() {
+    // By default, look for the root relative to the executable.
     if (require.main)
         return path.resolve(require.main.filename, '..', '..');
+    // Or use the current directory when used from the REPL.
     else
         return process.cwd();
 });
 
-// The project root directory. Use this (rather than `defaultRoot`) to
-// actually resolve paths in the project.
-exportFixedProp('root', function() {
-    var envDirectory = process.env[exports.envPrefix + "_ROOT"];
-    if (envDirectory)
-        return envDirectory;
-    else
-        return exports.defaultRoot;
-});
-
-
-// Add a directory property. Universe ensures the directory exists once the
-// property is accessed. The `directory` and `umask` parameters are optional.
-var addDir = exports.addDirectory = function(varName, directory, umask) {
+// Register a directory and properties.
+var addDir = exports.addDirectory = function(propName, directory, umask) {
     if (typeof(directory) !== 'string')
-        directory = varName;
+        directory = propName;
     if (typeof(umask) !== 'number')
         umask = 0777;
 
-    var defaultName = "default" +
-        varName.charAt(0).toUpperCase() + varName.slice(1);
-    exportFixedProp(defaultName, function() {
-        return path.resolve(exports.root, directory);
-    });
-
+    // By default, resolve relative to the root.
     var getDefault = function() {
-        var envName = exports.envPrefix + "_" + varName.toUpperCase();
-        var envDirectory = process.env[envName];
-
-        if (envDirectory)
-            return envDirectory;
-        else
-            return exports[defaultName];
+        return path.resolve(exports.root, directory);
     };
-    var didFix = function(value) {
+
+    // Once the property becomes fixed, ensure the directory exists.
+    var fixed = function(value) {
         try {
             fs.mkdirSync(value, umask);
         }
@@ -98,7 +103,8 @@ var addDir = exports.addDirectory = function(varName, directory, umask) {
                 throw e;
         }
     };
-    exportFixedProp(varName, getDefault, didFix);
+
+    addDirInternal(propName, umask, getDefault, fixed);
 };
 
 // Variant for adding a list or map of multiple directories in one shot.
@@ -107,9 +113,9 @@ var addDirs = exports.addDirectories = function(list_or_map) {
         list_or_map.forEach(addDir);
     }
     else {
-        for (var varName in list_or_map) {
-            var directory = list_or_map[varName];
-            addDir(varName, directory);
+        for (var propName in list_or_map) {
+            var directory = list_or_map[propName];
+            addDir(propName, directory);
         }
     }
 };
