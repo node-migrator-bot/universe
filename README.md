@@ -1,4 +1,4 @@
-**Universe** is a library used to declare some project directory structure. [![Build Status](https://secure.travis-ci.org/AngryBytes/universe.png)](http://travis-ci.org/AngryBytes/universe)
+**Universe** is a library used to declare some project directory structure. [![Build Status](https://secure.travis-ci.org/Two-Screen/universe.png)](http://travis-ci.org/Two-Screen/universe)
 
 Universe makes it possible for modules that are dependencies of a project 
 (possibly indirect or deep) to still be able to find project directories.
