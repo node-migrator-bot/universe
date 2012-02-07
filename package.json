@@ -1,7 +1,7 @@
 {
     "name": "universe",
     "description": "Project directory structure",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "Stéphan Kochen <stephan@angrybytes.com>",
     "keywords": ["project", "structure", "directory", "layout"],
     "license": "MIT",
