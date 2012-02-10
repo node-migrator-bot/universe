@@ -1,10 +1,10 @@
 var test = require('tap').test;
 
 test('only one version per node process', function(t) {
-  process._universe = {};
+  process._universe = { version: -1 };
   t.throws(function() { require('../'); }, {
       name: 'Error',
-      message: 'Mismatching versions of universe are loaded'
-  }, 'multiple versions should be rejected');
+      message: 'Incompatible versions of universe are loaded'
+  }, 'incompatible versions should be rejected');
   t.end();
 });

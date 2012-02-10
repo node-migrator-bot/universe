@@ -1,21 +1,24 @@
-// Get and export our version number.
-exports.version = require('./package.json').version;
-
-// Check for another instance of universe.
-if (process._universe) {
-    if (process._universe.version !== exports.version)
-        throw new Error("Mismatching versions of universe are loaded");
-    module.exports = process._universe;
-    return;
-}
-else {
-    // Claim our rightful spot!
-    process._universe = exports;
-}
-
-
 var fs   = require('fs');
 var path = require('path');
+
+
+exports.version = require('./package.json').version;
+const CONFIG_VERSION = 1;
+
+
+// Universe configuration applies process wide. Here, we try to find existing
+// configuration. (And bail if the config version differs.)
+var config;
+if (config = process._universe) {
+    if (config.version !== CONFIG_VERSION)
+        throw new Error("Incompatible versions of universe are loaded");
+}
+else {
+    config = process._universe = {
+        version: CONFIG_VERSION,
+        props: {}
+    };
+}
 
 
 // Pretty much everything we export is a lazy property that becomes
@@ -23,15 +26,32 @@ var path = require('path');
 var exportFixedProp = function(name, getDefault, didFix) {
     Object.defineProperty(exports, name, {
         configurable: true,
+
         get: function() {
-            return exports[name] = getDefault();
+            // See if already set in another module instance.
+            var value = config.props[name];
+            if (!value)
+                value = getDefault();
+
+            // Call into the setter and return.
+            return exports[name] = value;
         },
+
         set: function(value) {
+            // See if already set in another module instance.
+            if (config.props[name])
+                value = config.props[name];
+            else
+                config.props[name] = value;
+
+            // Redefine as read-only.
             Object.defineProperty(exports, name, {
                 value: value,
                 writable: false,
                 configurable: false
             });
+
+            // Callback.
             if (didFix)
                 didFix(value);
         }
