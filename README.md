@@ -18,7 +18,7 @@ In addition to the root directory, universe also defines properties for the
     console.log(universe.bin);  # => '/home/john/myapp/bin'
 
 Universe will attempt to create directories that don't exist when the property
-is accessed. (Except for `root`.)
+is accessed. (Except for the `root`.)
 
 Each of these properties has a companion function named `rootPath`, `binPath`,
 etc. These are `path.join` helpers:
@@ -95,7 +95,7 @@ them with the root.
     universe.addDirectory('sysTmp', '/tmp');
     universe.addDirectories({
         libexec: 'libexec',
-        data: 'data',
+        db: 'data/db',
         sysTmp: '/tmp'
     });
 

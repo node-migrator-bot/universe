@@ -60,7 +60,7 @@ var addDirInternal = function(propName, umask, getDefault, fixed) {
         var envName = exports.envPrefix + "_" + propName.toUpperCase();
         var envDirectory = process.env[envName];
         if (envDirectory)
-            return envDirectory;
+            return path.resolve(envDirectory);
         // Otherwise, use the application default
         // from the property defined above.
         else
@@ -101,13 +101,22 @@ var addDir = exports.addDirectory = function(propName, directory, umask) {
 
     // Once the property becomes fixed, ensure the directory exists.
     var fixed = function(value) {
-        try {
-            fs.mkdirSync(value, umask);
-        }
-        catch (e) {
-            if (e.code !== 'EEXIST')
-                throw e;
-        }
+        var pre = exports.root + "/";
+        if (value.slice(0, pre.length) !== pre)
+            return;
+
+        var parts = value.slice(pre.length).split('/');
+        var i = exports.root;
+        parts.forEach(function(part) {
+            i += "/" + part;
+            try {
+                fs.mkdirSync(i, umask);
+            }
+            catch (e) {
+                if (e.code !== 'EEXIST')
+                    throw e;
+            }
+        });
     };
 
     addDirInternal(propName, umask, getDefault, fixed);

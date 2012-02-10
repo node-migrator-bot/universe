@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var test = require('tap').test;
 var rimraf = require('rimraf');
 var universe = require('../');
@@ -15,9 +16,8 @@ test('directory utilities', function(t) {
 
     t.equal(universe.tmp, testTmpDir,
         'tmp dir should be underneath root');
-    t.doesNotThrow(function() {
-        fs.statSync(testTmpDir);
-    }, 'tmp dir should exist');
+    t.ok(path.existsSync(universe.tmp),
+        'tmp dir should exist after access');
 
     t.equal(universe.tmpPath('foobar'), testTmpDir + '/foobar',
         'tmpPath should return a path.join()ed subpath');

@@ -1,3 +1,4 @@
+var path = require('path');
 var test = require('tap').test;
 var universe = require('../');
 
@@ -13,6 +14,8 @@ test('default directories', function(t) {
 
     t.equal(universe.root, universe.defaultRoot,
         'root should equal to default root');
+    t.notOk(path.existsSync(universe.var),
+        'root must be manually created; should not exist');
 
     universe.defaultTmp = '/tmp';
     t.equal(universe.tmp, '/tmp',
