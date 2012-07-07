@@ -15,13 +15,13 @@ test('custom directories', function(t) {
     universe.addDirectory('var');
     t.equal(universe.var, testVarDir,
         'custom var dir should be underneath root');
-    t.ok(path.existsSync(universe.var),
+    t.ok(fs.existsSync(universe.var),
         'custom var dir should exist after access');
 
     universe.addDirectories({ 'db': 'data/db' });
     t.equal(universe.db, testDbDir,
         'custom db dir should be two levels underneath root');
-    t.ok(path.existsSync(universe.db),
+    t.ok(fs.existsSync(universe.db),
         'custom db dir should exist after access');
 
     rimraf(testDir, function(err) {

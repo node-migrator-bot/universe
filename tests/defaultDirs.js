@@ -14,7 +14,7 @@ test('default directories', function(t) {
 
     t.equal(universe.root, universe.defaultRoot,
         'root should equal to default root');
-    t.notOk(path.existsSync(universe.var),
+    t.notOk(fs.existsSync(universe.var),
         'root must be manually created; should not exist');
 
     universe.defaultTmp = '/tmp';

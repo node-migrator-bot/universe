@@ -16,7 +16,7 @@ test('directory utilities', function(t) {
 
     t.equal(universe.tmp, testTmpDir,
         'tmp dir should be underneath root');
-    t.ok(path.existsSync(universe.tmp),
+    t.ok(fs.existsSync(universe.tmp),
         'tmp dir should exist after access');
 
     t.equal(universe.tmpPath('foobar'), testTmpDir + '/foobar',
